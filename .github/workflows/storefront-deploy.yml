@@ -1,0 +1,49 @@
+name: Storefront deploy (Cloudflare Workers)
+
+# Publishes the storefront as a Cloudflare Worker with static assets.
+# Requires CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets.
+# Skips gracefully if the token is not set.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'storefront/**'
+      - 'wrangler.toml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: storefront-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy Worker
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify storefront assets present
+        run: |
+          test -f storefront/catalogue.js
+          test -f storefront/data/products-current.json
+          test -f wrangler.toml
+          echo "All required files present."
+
+      - name: Deploy Worker
+        if: env.HAS_TOKEN == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+
+      - name: Skip deploy (no Cloudflare token)
+        if: env.HAS_TOKEN != 'true'
+        run: echo "CLOUDFLARE_API_TOKEN not set - skipping deploy."
