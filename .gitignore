@@ -1,0 +1,17 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+.env.local
+*.log
+.DS_Store
+coverage/
+
+# runtime ledgers
+storefront/enquiries.jsonl
+storefront/dist/
+.openhands/
+data/
+.env
+.wrangler/
+worker-configuration.d.ts
