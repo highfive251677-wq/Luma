@@ -1,0 +1,37 @@
+{
+  "name": "luma-foundry-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Luma Foundry — AI workshop & automation platform. Evidence-gated product pipeline with an MCP tool surface.",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "storefront"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --pretty",
+    "clean": "tsc -b --clean && rm -rf packages/*/dist apps/*/dist",
+    "test": "npm run test --workspaces --if-present",
+    "evidence": "node scripts/generate-evidence.mjs",
+    "dev:mcp": "npm run dev -w @luma/mcp-server",
+    "dev:api": "npm run dev -w @luma/api"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "dotenv": "^18.0.6",
+    "drizzle-kit": "^0.31.11",
+    "drizzle-zod": "^0.8.3",
+    "supabase": "^2.120.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.4",
+    "postgres": "^3.4.9"
+  }
+}
